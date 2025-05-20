@@ -35,3 +35,46 @@ export const signup = async(req:Request,res:Response):Promise<void>=>{
 };
 
 
+export const signin = async (req:Request,res:Response)=>
+{
+    const validInput = signinSchema.safeParse(req.body);
+    if (!validInput.success) {
+        console.log("Some error in sigin input validation");
+        res.send("Some error in sigin input validation");
+    return;
+    }
+
+    const {username,password} = req.body;
+
+    try{
+        const user = await prisma.user.findFirst({where:{
+            username:username
+        }});
+        if (!user){
+            res.status(404).json({message:"User not found"});
+            return;
+        }
+        console.log(user)
+        const isPasswordValid = await bcrypt.compare(password,user.password)
+        if(!isPasswordValid){
+            res.status(401).json({message:"Invalid Credentials"});
+            return;
+        }
+
+        const token = jwt.sign(
+            {id:user.id},
+            process.env.JWT_SECRET || "",
+            {expiresIn:"7days"}
+        );
+
+        res.status(200).json({
+            message:"User logged in successfully",
+            token,
+            username
+        })
+    }
+    catch(e){
+        console.log("signin error:",e);
+        res.status(500).json({message:"Internal Sever Error"})
+    }
+}
