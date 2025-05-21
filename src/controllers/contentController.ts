@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { prisma } from "./authController";
-import { authMidlleware } from "../middleware/auth";
+import { Pinecone } from "@pinecone-database/pinecone";
 // interface Content{
 //     link?:string;
 //     title:string;
 //     content?:string;
 //     type:string;
 // }
+
 
 export const addContent = async (req: Request, res: Response) => {
   const { link, title, content, type } = req.body;
