@@ -3,7 +3,7 @@ import {signupSchema,signinSchema} from '../inputValidations/validation';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {PrismaClient} from "@prisma/client";
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const signup = async(req:Request,res:Response):Promise<void>=>{
     const validInput = signupSchema.safeParse(req.body);
